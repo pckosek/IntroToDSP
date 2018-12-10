@@ -9,6 +9,18 @@ function a_out = idft_fir( a_in, offset )
 %    offset can be a scalar or size(a_in) for designer phase 
 %    variance
 
+
+                                        % General theory of operation:
+                                        %   - construct the magnitude response 
+                                        %     in the frequency domain using data the
+                                        %     user passed to the function
+                                        %                                          
+                                        %   - convert the complex magnitude response 
+                                        %     back to a time domain impulse response
+                                        %    
+                                        %   - return
+
+
 if nargin<2
     offset = 0;
 end
@@ -25,22 +37,23 @@ linear_phase = [ (-2*pi/N)*[0:(N-1)/2]*( (N-1)/2 ) ];
                                         % optionally scale angles
 phase_offset = (offset.*N);
 
-                                        % construct a half of the complex impulse response by
-                                        % converting amplitudes of magnitude response
+                                        % construct half of the complex (frequency domain) 
+                                        % magnitude response by converting 
+                                        % desired magnitude amplitudes (the data passed in)
                                         % to vectors with the same magnitude, but
                                         % with the complex phase angles defined above
 half_wave = a_in.* exp(1i*(phase_offset+linear_phase) ); 
 
-                                        % set the DC amplitude of the complex response
+                                        % set the DC amplitude of the complex (frequency) response
 half_wave(1) = a_in(1);
 
-                                        % compute the second half of the complex response
-                                        % from the complex conjugate of the first half
+                                        % compute the second half of the frequency response
+                                        % by taking the complex conjugate of the first half
                                         % (excluding dc value)
 full_wave = [half_wave,conj(half_wave(end:-1:2))];
 
-                                        % the impulse returned is the ifft of the 
-                                        % complex response just constructed
+                                        % the impulse returned is just the ifft of the 
+                                        % complex (frequency domain) response that we just constructed
 a_out = real( ifft( full_wave ) );
 
 return
