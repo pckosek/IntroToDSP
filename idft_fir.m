@@ -21,10 +21,6 @@ function a_out = idft_fir( a_in, offset )
                                         %   - return
 
 
-if nargin<2
-    offset = 0;
-end
-
                                         % TOTAL NUMBER OF POINTS IN OUTPUT
 N = length(a_in)*2 - 1;						
 
@@ -34,7 +30,14 @@ N = length(a_in)*2 - 1;
                                         % on the complex unit circle
 linear_phase = [ (-2*pi/N)*[0:(N-1)/2]*( (N-1)/2 ) ];
 
-                                        % optionally scale angles
+
+                                        % optional nonlinear phase parameter
+                                        % set to zero if not zpecified
+if nargin<2
+    offset = 0;
+end
+                                        % define the element-wise phase offset
+                                        % (will be zero if not specified)
 phase_offset = (offset.*N);
 
                                         % construct half of the complex (frequency domain) 
