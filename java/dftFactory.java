@@ -14,7 +14,8 @@ public class dftFactory {
     	int N = fft_out.length;
 
 
-    	// pre compute cos and sin data
+    	// pre compute cos and sin wavetables
+    	//  	(so we don't have to calculate them each step of the operation)
     	double[] cos_data = new double[N];
     	double[] sin_data = new double[N];
 
@@ -84,7 +85,7 @@ public class dftFactory {
 
 				// iterate over waveform
 				indx = 0;
-				for (int n=0; n < real_in.length; n++) {
+				for (int n=0; n < input_rows; n++) {
 
 					fft_out[k][column_no].real += real_in[n][column_no] * cos_data[indx];
 					fft_out[k][column_no].imag -= real_in[n][column_no] * sin_data[indx];
@@ -143,8 +144,6 @@ public class dftFactory {
 	    }
 	}    
 
-/*
-	CURRENTLY BROKEN -> NEEDS TO DO POSITIVE IMAGINARY COMPUTATIONS, NOT -
 
     public void idft2(Complex[][] Complex_out, Complex[][] Complex_in) {
 
@@ -156,19 +155,17 @@ public class dftFactory {
     	// - PART 1, DFT THE COLUMNS
 
     	// determine the size of the 2-D DFT
-    	int N_rows = fft_out.length;
-    	int N_cols = fft_out[0].length;
+    	int N_rows = Complex_in.length;
+    	int N_cols = Complex_in[0].length;
 
-		System.out.println("N_rows: "+N_rows);
-		System.out.println("N_cols: "+N_cols+"\n");
+    	int input_rows = N_rows;
+    	int input_cols = N_cols;
 
-    	int input_rows = real_in.length;
-    	int input_cols = real_in[0].length;
+    	// idft's require scaling
+    	double scale_factor = 1./(N_rows * N_cols);
 
-		System.out.println("input_rows: "+input_rows);
-		System.out.println("input_cols: "+input_cols+"\n");
 
-    	// pre compute cos and sin data
+    	// pre compute cos and sin wave tables
     	double[] cos_data = new double[N_rows];
     	double[] sin_data = new double[N_rows];
 
@@ -186,21 +183,19 @@ public class dftFactory {
 			for (int k=0; k<N_rows; k++) {
 
 				// reset current output to zero
-				fft_out[k][column_no].real = 0;
-				fft_out[k][column_no].imag = 0;
+				Complex_out[k][column_no].real = 0;
+				Complex_out[k][column_no].imag = 0;
 
 				// iterate over waveform
 				indx = 0;
-				for (int n=0; n < real_in.length; n++) {
-					System.out.print("[n: "+n+",k: "+k+",c: "+column_no+"]\n");
+				for (int n=0; n < input_rows; n++) {
 
-					fft_out[k][column_no].real += real_in[n][column_no] * cos_data[indx];
-					fft_out[k][column_no].imag -= real_in[n][column_no] * sin_data[indx];
+					Complex_out[k][column_no].real += Complex_in[n][column_no].real * cos_data[indx] + Complex_in[n][column_no].imag * sin_data[indx];
+					Complex_out[k][column_no].imag += Complex_in[n][column_no].real * sin_data[indx] - Complex_in[n][column_no].imag * cos_data[indx];
 
 					indx += k;
 					indx %= N_rows;
 				}
-				System.out.println("\n");
 	    	}
 	    }
 
@@ -236,8 +231,8 @@ public class dftFactory {
 				indx = 0;
 				for (int n=0; n < N_cols; n++) {
 	
-					temp_real_row[k] += fft_out[row_no][n].real * cos_data[indx] - fft_out[row_no][n].imag * sin_data[indx];
-					temp_imag_row[k] -= (fft_out[row_no][n].real * sin_data[indx] + fft_out[row_no][n].imag * cos_data[indx]);
+					temp_real_row[k] += scale_factor*(Complex_out[row_no][n].real * cos_data[indx] + Complex_out[row_no][n].imag * sin_data[indx]);
+					temp_imag_row[k] += scale_factor*(Complex_out[row_no][n].real * sin_data[indx] - Complex_out[row_no][n].imag * cos_data[indx]);
 
 					indx += k;
 					indx %= N_cols;
@@ -246,10 +241,9 @@ public class dftFactory {
 	    	}
 
 			for (int k=0; k<N_cols; k++) {
-				fft_out[row_no][k].real = temp_real_row[k];
-				fft_out[row_no][k].imag = temp_imag_row[k];
+				Complex_out[row_no][k].real = temp_real_row[k];
+				Complex_out[row_no][k].imag = temp_imag_row[k];
 			}
 	    }
 	}    
-	*/
 }

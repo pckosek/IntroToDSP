@@ -9,9 +9,6 @@ public class HelloWorld {
     	ComplexFactory cf = new ComplexFactory();
     	dftFactory mdftFactory = new dftFactory();
 
-    	Complex[][] idft2_result = cf.create(2,5);
-
-
 
     	// --------------------------------------------------
     	// ONE DIMENSIONAL DFT
@@ -57,14 +54,17 @@ public class HelloWorld {
     	// TWO DIMENSIONAL DFT
 
     	// create Complex[][] of size [2][5]
-    	Complex[][] dft2_result  = cf.create(2,5);
+    	Complex[][]  dft2_result  = cf.create(2,5);
+    	Complex[][] idft2_result  = cf.create(2,5);
 
     	double[][] matrix_in = { {1., 2., 3, 4, 5.}, {0., 1., 0., 1., 0} };
 		mdftFactory.dft2(dft2_result, matrix_in);
+		mdftFactory.idft2(idft2_result, dft2_result);
 
-
+		// DFT RESULT ------------------------------------------------------------
 		// DISPLAY REAL RESULT
-        System.out.println("--------------------");
+        System.out.println("------  DFT  ----------");
+        System.out.println("REAL :");
         for (int i=0; i<dft2_result.length; i++ ) {
         	for (int j=0; j<dft2_result[i].length; j++ ) {
 		        System.out.print(" "+dft2_result[i][j].real);
@@ -72,13 +72,34 @@ public class HelloWorld {
 	        System.out.print("\n");
         }
 		// DISPLAY IMAG RESULT
-        System.out.println("--------------------");
+        System.out.println("-  -  -  -  -  -  - ");
+        System.out.println("IMAG :");
         for (int i=0; i<dft2_result.length; i++ ) {
         	for (int j=0; j<dft2_result[i].length; j++ ) {
 		        System.out.print(" "+dft2_result[i][j].imag);
 	        }
 	        System.out.print("\n");
         }
-        System.out.println("--------------------");
+
+		// IDFT RESULT -----------------------------------------------------------
+		// DISPLAY REAL RESULT
+        System.out.println("------  IDFT  ---------");
+        System.out.println("REAL :");
+        for (int i=0; i<idft2_result.length; i++ ) {
+        	for (int j=0; j<idft2_result[i].length; j++ ) {
+		        System.out.print(" "+idft2_result[i][j].real);
+	        }
+	        System.out.print("\n");
+        }
+		// DISPLAY IMAG RESULT
+        System.out.println("-  -  -  -  -  -  - ");
+        System.out.println("IMAG :");
+        for (int i=0; i<idft2_result.length; i++ ) {
+        	for (int j=0; j<idft2_result[i].length; j++ ) {
+		        System.out.print(" "+idft2_result[i][j].imag);
+	        }
+	        System.out.print("\n");
+        }
+
     }
 }
